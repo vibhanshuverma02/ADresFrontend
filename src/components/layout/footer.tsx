@@ -36,7 +36,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links
           <div>
             <h4 className="text-lg font-semibold mb-4 text-blue-400">
               Quick Links
@@ -91,10 +91,10 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Resources */}
-          <div>
+          {/* <div>
             <h4 className="text-lg font-semibold mb-4 text-blue-400">
               Resources
             </h4>
@@ -148,7 +148,7 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Contact Information */}
           <div>
@@ -157,10 +157,7 @@ export function Footer() {
             </h4>
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
-                <MapPin className="w-4 h-4 text-blue-400 mt-1 flex-shrink-0" />
-                <div className="text-gray-300 text-sm">
-                  ICARS, Greater Noida Campus, Uttar Pradesh, India
-                </div>
+               
               </div>
 
               <div className="flex items-center space-x-3">
@@ -179,9 +176,12 @@ export function Footer() {
               </div>
 
               <div className="mt-4">
+               <Link
+                href= "https://13.203.206.32/Noticeboard?type=newsletter">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
                   Subscribe to Newsletter
                 </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -190,26 +190,25 @@ export function Footer() {
         {/* Copyright */}
         <div className="border-t border-gray-700 pt-6 text-center">
           <p className="text-gray-400 text-sm">
-            © 2025 ADRES Network. All rights reserved. | Last updated: Monday,
-            January 27, 2025
+            © 2026 ADRES Network. All rights reserved. 
           </p>
           <div className="mt-2 space-x-4">
             <Link
-              href="/contact"
+              href=""
               className="text-gray-400 hover:text-white text-sm"
             >
               Privacy Policy
             </Link>
             <span className="text-gray-600">•</span>
             <Link
-              href="/contact"
+              href=""
               className="text-gray-400 hover:text-white text-sm"
             >
               Terms of Service
             </Link>
             <span className="text-gray-600">•</span>
             <Link
-              href="/contact"
+              href=""
               className="text-gray-400 hover:text-white text-sm"
             >
               Accessibility

@@ -5,31 +5,31 @@ const resourceSections = [
   {
     title: "Research Papers",
     type: "RESEARCH_PAPER",
-    image: "/images/research.jpg",
+    image: "https://phdthesiswriter.in/wp-content/uploads/2023/12/blog-design-1-1.jpg",
     description: "Peer-reviewed research and academic studies",
   },
   {
     title: "Books",
     type: "BOOK",
-    image: "/images/books.jpg",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv3a5hb5zcWpXrW2s0cx47wA7yWOfXNjrPvQ&s",
     description: "Curated books and publications",
   },
   {
     title: "Whitepapers",
     type: "WHITE_PAPER",
-    image: "/images/whitepapers.jpg",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlvYFZMJ3PGFvSfoYZmw879kDMle8uVb6bQ&s",
     description: "In-depth analytical documents",
   },
   {
     title: "Policy Briefs",
     type: "PolicyBrief",
-    image: "/images/policy.jpg",
+    image: "https://spp.cmu.ac.th/wp-content/uploads/2020/08/pb-01-scaled.jpg",
     description: "Concise policy-focused insights",
   },
   {
     title: "Toolkits",
     type: "Toolkit",
-    image: "/images/toolkits.jpg",
+    image: "https://s3.amazonaws.com/libapps/accounts/97321/images/ResearchToolkit_Logo.png",
     description: "Practical guides and tools",
   },
 ];

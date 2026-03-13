@@ -128,7 +128,7 @@ export default function LoginPage() {
               <Card className="bg-white/90 backdrop-blur shadow-lg border rounded-xl">
                 <CardHeader>
                   <CardTitle>Login</CardTitle>
-                  <ExternalLoginButtons></ExternalLoginButtons>
+                  {/* <ExternalLoginButtons></ExternalLoginButtons> */}
                   <CardDescription>Please enter your credentials</CardDescription>
                 </CardHeader>
 
@@ -174,7 +174,7 @@ export default function LoginPage() {
                       {submitting || loading ? "Logging in..." : "Login"}
                     </Button>
 
-                    <div className="text-center text-gray-500 text-sm">
+                    {/* <div className="text-center text-gray-500 text-sm">
                       Or sign in with
                     </div>
                     <div className="flex gap-3">
@@ -185,7 +185,7 @@ export default function LoginPage() {
                       <Button variant="outline" className="w-1/2 flex gap-2">
                         <FaFacebook size={18} className="text-blue-600" /> Facebook
                       </Button>
-                    </div>
+                    </div> */}
                   </CardFooter>
                 </form>
               </Card>
