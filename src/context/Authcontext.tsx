@@ -205,6 +205,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data.message === "login") {
         // ✅ Save accessToken
         localStorage.setItem("accessToken", res.data.accessToken);
+        document.cookie = `accessToken=${token}; path=/; SameSite=Lax; Secure`;
         localStorage.setItem("user", JSON.stringify(res.data.user));
 
         setUser(res.data.user);
@@ -238,22 +239,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // ROLE CHOICE
   // -------------------------------
 
-  const chooseRole = (role: string) => {
-    setActiveRole(role);
-    localStorage.setItem("activeRole", role);
-    document.cookie = `activeRole=${role}; path=/; domain=localhost; SameSite=Lax`;
-
-
-    if (role === "SUPER_ADMIN") {
-      window.location.href = "https://13.203.206.32/dashboard/superadmin/Dashboard";
-    } else if (role === "COE_MANAGER") {
-      window.location.href = "https://13.203.206.32/dashboard/coemanager/Dashboard";
-    } else if (role === "RESEARCHER") {
-      window.location.href = "https://13.203.206.32/dashboard/researcher/Dashboard";
-    } else {
-      window.location.href = "https://13.203.206.32/choose-role";
-    }
-  };
+ const chooseRole = (role: string) => {
+  setActiveRole(role);
+  localStorage.setItem("activeRole", role);
+  // ✅ Remove domain=localhost
+  document.cookie = `activeRole=${role}; path=/; SameSite=Lax`;
+  
+  if (role === "SUPER_ADMIN") {
+    window.location.href = "https://13.203.206.32/dashboard/superadmin/Dashboard";
+  } else if (role === "COE_MANAGER") {
+    window.location.href = "https://13.203.206.32/dashboard/coemanager/Dashboard";
+  } else if (role === "RESEARCHER") {
+    window.location.href = "https://13.203.206.32/dashboard/researcher/Dashboard";
+  }
+};
 
   return (
     <AuthContext.Provider
