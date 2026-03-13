@@ -1,0 +1,91 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "ICARS",
+        "description": "<img src=\"https://mymaps.usercontent.google.com/hostedimage/m/*/3ALCsBoqjicQme2te9xa-IRBTVcTYAsaK30xNm1sFZvzx6KYH3CnL8mYwaMQdTRkrjhf_CjUyTjdk4t9vz748E8xcX2JD4cobdA__Q3zjNBandKqHRiYoaItDER4C1eCGngtWdcHdhpaAv7uezxxvXqx2W-zJeA-j-NsCEID-1-lxyY0TsW5ncuhTwIGbMO1Cdj1dD6wYqJn6EfPt3SWNZEHo0Fp6khT12ZZG8GR2A9ZtoIvnAhEwLP0flFFlBPw?authuser=0&fife=s16383\" height=\"200\" width=\"auto\" /><br><br>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.4919265,
+          28.4642755
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Centre of Excellence for Climate Change & Vector Borne Diseases",
+        "description": "<img src=\"https://mymaps.usercontent.google.com/hostedimage/m/*/3ALCsBoqawcD3frdPBaZWGoLyrVYQ3pgP6GUneduk47wYT9wYw1qJfMyzFsuSPw06KBc2lWoZ1LjRFYbdOfA95S79skR1bL2L45OTk6nyP9CBGy7gX3EfCJgYdfy8VPiAsBb0FIozA6uwllxbfPKQwMCLT4hgJ96x1gllM9Arqk2uaVpaIuY4JaYXDe59ywgJmlmJxLTW6IBTIII1oO5f6vevYdjvKwUz1Dwkh1Di-LE4wNZW41bb9oDAm9MpwfE?authuser=0&fife=s16383\" height=\"200\" width=\"auto\" /><br><br>👤 Name:<br>Dr. R. C. Dhiman<br>Designation: Scientist ‘G’<br><br>🏢 Organization:<br>ICMR–National Institute of Malaria Research (NIMR), New Delhi<br><br>✉️ Email:<br><br>r.c.dhiman@gmail.com<br><br>ramdas9@gmail.com<br><br>📞 Contact:<br>9871535858"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.0761088,
+          28.5767077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "DST–ICRISAT Centre of Excellence on Climate Change Research for Plant Protection (CoE-CCRPP): Pest and Disease Management for Climate Change Adaptation",
+        "description": "<img src=\"https://mymaps.usercontent.google.com/hostedimage/m/*/3ALCsBooiDONR3NXEIdfKH8_09VBJ9oQ4Cj6Mzt-C6HvPuldwc6U3qSUmvDKyhWrjg2xobIMIryovnU73l2qCf7JJSwdSMmGSnQwb-eXqgdgOjlVAQ8zXSP6FEQDJWiXEyNiBGjO1g9AKlEDCmmwLzo40NJTCo1iIpAHkhwtMDkyo5-1IDmeIsdh6VDY9Sw0sJbyrz7rOiqAURzBljMQit-2DUMEe-4zP4Cg5P32c-OG7FFj7JRW7YDiLBhun0eM?authuser=0&fife=s16383\" height=\"200\" width=\"auto\" /><br><br>👤 Name:<br>Dr. Mamta Sharma<br>Designation: Theme Leader & Principal Scientist<br><br>🏢 Organization:<br>International Crops Research Institute for the Semi-Arid Tropics (ICRISAT), Telangana<br><br>✉️ Email:<br>mamta.sharma@cgiar.org<br><br>📞 Contact:<br>9849925225"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.2790229,
+          17.517837
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Centre for Excellence in Climate Change",
+        "description": "<img src=\"https://mymaps.usercontent.google.com/hostedimage/m/*/3ALCsBophxBA-BwWcwUFFTXDbv52nB9Q-F2uhsvuc1fX8sD4wqveZ0Mw4Lw4nw22aRgmdrYkeTF07s6F_hfOou3o-nv_MgjkJC6AtJEIWTVea7RiF9kWoh3GPQ_I7pmGzO---i-nZW5A14SUSHW6BFp3gwtrAzmM_9vsC7xEB_EJkY9vIkyMy1WMYJaY5ZX3YbzHjNYAiKR8WyqdwNsrvisXHPq22GgjBW7mSmbcFJV7YYhNq-TKsSJWc0HjYYpQ?authuser=0&fife=s16383\" height=\"200\" width=\"auto\" /><br><br>👤 Name:<br>Prof. Shakil Ahmad Romshoo<br>Designation: Professor<br><br>🏢 Organization:<br>University of Kashmir, Jammu & Kashmir<br><br>✉️ Email:<br>shakilrom@kashmiruniversity.ac.in<br><br>📞 Contact:<br>9419010924"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.8365172,
+          34.1279625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "DST-Centre of Excellence in Climate Studies",
+        "description": "<img src=\"/Ravi.jpg\"👤 Name:<br>Dr. Subhankar Karmakar<br>Designation: Associate Professor<br><br>🏢 Organization:<br>Indian Institute of Technology Bombay (IITB), Mumbai<br><br>✉️ Email:<br>skarmakar@iitb.ac.in<br><br>📞 Contact:<br>9930035878"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.9151061,
+          19.1330605
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "DST’s Centre of excellence on Water resources, Cryosphere and climate Change studies",
+        "description": "👤 Name:<br>Dr. Anil Kumar Misra<br><br>🏢 Organization:<br>Sikkim University<br><br>✉️ Email:<br>akmisra@cus.ac.in<br><br>📞 Contact:<br>9873122054"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.588748,
+          27.3075355
+        ]
+      }
+    }
+    
+  
+  ]
+}

@@ -1,0 +1,195 @@
+"use client";
+
+import { useRef } from "react";
+import { cn } from "@/lib/utils";
+import { motion, useScroll, useTransform } from "framer-motion";
+
+export type TimelineItem = {
+  year: number;
+  title?: string;
+  description: string;
+  side?: "top" | "bottom";
+};
+
+const DEFAULT_ITEMS: TimelineItem[] = [
+  {
+    year: 2003,
+    title: "2003",
+    description:
+      "Pullmantur Air is founded and achieves AOC and CAMO certification.",
+    side: "top",
+  },
+  {
+    year: 2006,
+    title: "2006",
+    description: "Pullmantur becomes part of Royal Caribbean PLC",
+    side: "top",
+  },
+  {
+    year: 2011,
+    title: "2011",
+    description:
+      "Cancún, Punta Cana and Santo Domingo become regular destinations",
+    side: "top",
+  },
+  {
+    year: 2012,
+    title: "2012",
+    description: "",
+    side: "bottom",
+  },
+  {
+    year: 2014,
+    title: "2014",
+    description: "Pullmantur Air becomes Wamos",
+    side: "top",
+  },
+  {
+    year: 2019,
+    title: "2019",
+    description: "Wamos continues international expansion",
+    side: "top",
+  },
+];
+
+export function HorizontalTimeline({
+  items = DEFAULT_ITEMS,
+  className,
+}: {
+  items?: TimelineItem[];
+  className?: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track scroll within this section
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Horizontal movement of the rail
+  // keep still at first, then move gradually
+  const x = useTransform(scrollYProgress, [0, 0.15, 1], ["0%", "0%", "-65%"]);
+
+  // Header motion (from left, fade in)
+  const headerX = useTransform(scrollYProgress, [0, 0.2], ["-100%", "0%"]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
+
+  return (
+    <section
+      ref={containerRef}
+      className={cn("relative w-full min-h-[200vh] bg-background", className)}
+    >
+      {/* Sticky frame keeps timeline pinned while scrolling */}
+      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.header
+            style={{ x: headerX, opacity: headerOpacity }}
+            className="mb-12 sm:mb-16"
+          >
+            <h2 className="text-2xl font-bold tracking-tight text-slate-700">
+              Our numbers back us up
+            </h2>
+            <p className="mt-2 text-slate-500">
+              200 Airports, 87 countries, over 3 million seats per year
+            </p>
+          </motion.header>
+        </div>
+
+        <div className="relative">
+          {/* gradient fades at edges */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent" />
+
+          {/* Horizontal rail synced with scroll */}
+          <motion.div
+            style={{ x }}
+            className="relative flex h-[320px] w-max items-stretch pl-12"
+          >
+            {items.map((item, idx) => (
+              <motion.div
+                key={item.year}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <TimelineItem item={item} index={idx} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TimelineItem({
+  item,
+  index,
+}: {
+  item: TimelineItem;
+  index: number;
+}) {
+  const isTop = (item.side ?? (index % 2 === 0 ? "top" : "bottom")) === "top";
+
+  return (
+    <div className="relative mx-8 flex w-[320px] shrink-0 items-center justify-center">
+      {/* Tick + marker */}
+      <div className="pointer-events-none absolute left-1/2 top-[170px] -translate-x-1/2">
+        <div className="mx-auto h-10 w-px bg-slate-400/70" />
+        <div className="mx-auto mt-4 grid place-items-center">
+          <span className="grid size-7 place-items-center rounded-full border-2 border-slate-400 bg-background shadow-sm">
+            <span className="size-1.5 rounded-full bg-slate-600" />
+          </span>
+        </div>
+      </div>
+
+      {/* Label card */}
+      <div
+        className={cn(
+          "absolute left-1/2 w-[260px] -translate-x-1/2 text-slate-700",
+          isTop ? "-top-1" : "top-[210px]"
+        )}
+      >
+        <div className="text-xl font-semibold tracking-tight text-slate-500">
+          {item.title ?? item.year}
+        </div>
+        {item.description && (
+          <p className="mt-1 max-w-xs text-sm leading-snug text-slate-600">
+            {item.description}
+          </p>
+        )}
+      </div>
+
+      {/* Year baseline label */}
+      <div className="absolute left-1/2 top-[200px] -translate-x-1/2 text-sm text-slate-500">
+        {item.year}
+      </div>
+    </div>
+  );
+}
+
+export default HorizontalTimeline;
+
+
+
+
+
+
+
+
+
+
+
+sbx:vCP9Nw1ExgrrOZvtKI5Skohe.asIQiE7VjvF13w6rMJeL2Nc9PuMSCEje -toek
+
+
+
+
+j30g0Oz14rUHR4o95GzLaxSaamKWscUE -scret key
+
+
+
+
+"shadcn-ui": "^0.9.5",

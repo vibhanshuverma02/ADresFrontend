@@ -1,0 +1,56 @@
+{
+  "info": {
+    "name": "Sumsub SDK Access Token",
+    "_postman_id": "b55b1dcd-79c7-4d3c-8d34-25c6f6fbdc5f",
+    "description": "Collection to generate Sumsub SDK access token using APP_TOKEN and APP_SECRET",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get SDK Access Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"externalUserId\": \"1000014498@dit.edu.in\"\n}"
+        },
+        "url": {
+          "raw": "https://api.sumsub.com/resources/accessTokens/sdk",
+          "protocol": "https",
+          "host": ["api", "sumsub", "com"],
+          "path": ["resources", "accessTokens", "sdk"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const crypto = require('crypto');",
+          "",
+          "const APP_TOKEN = \"sbx:iauODXroV7oenJMoJZhbnWQu.YMErl5oWD57IiHq0jCN3WRxwrT4fuY7l\";",
+          "const APP_SECRET = \"k1zSTi4wKHmoBIxx4FxxXqTBJZkCouaR\";",
+          "",
+          "const ts = Math.floor(Date.now() / 1000);",
+          "const method = pm.request.method;",
+          "const path = pm.request.url.getPath();",
+          "const body = pm.request.body ? pm.request.body.raw : \"\";",
+          "",
+          "const payload = ts + method + path + body;",
+          "const sig = crypto.createHmac('sha256', APP_SECRET).update(payload).digest('hex');",
+          "",
+          "pm.request.headers.add({ key: 'X-App-Token', value: APP_TOKEN });",
+          "pm.request.headers.add({ key: 'X-App-Access-Ts', value: ts.toString() });",
+          "pm.request.headers.add({ key: 'X-App-Access-Sig', value: sig });"
+        ]
+      }
+    }
+  ]
+}
