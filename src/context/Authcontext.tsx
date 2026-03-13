@@ -205,7 +205,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data.message === "login") {
         // ✅ Save accessToken
         localStorage.setItem("accessToken", res.data.accessToken);
-        document.cookie = `accessToken=${token}; path=/; SameSite=Lax; Secure`;
+        document.cookie = `accessToken=${res.data.accessToken}; path=/; SameSite=Lax; Secure`;
         localStorage.setItem("user", JSON.stringify(res.data.user));
 
         setUser(res.data.user);
