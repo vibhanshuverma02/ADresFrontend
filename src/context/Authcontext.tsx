@@ -245,13 +245,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
     if (role === "SUPER_ADMIN") {
-      window.location.href = "http://13.203.206.32/dashboard/superadmin/Dashboard";
+      window.location.href = "https://13.203.206.32/dashboard/superadmin/Dashboard";
     } else if (role === "COE_MANAGER") {
-      window.location.href = "http://13.203.206.32/dashboard/coemanager/Dashboard";
+      window.location.href = "https://13.203.206.32/dashboard/coemanager/Dashboard";
     } else if (role === "RESEARCHER") {
-      window.location.href = "http://13.203.206.32/dashboard/researcher/Dashboard";
+      window.location.href = "https://13.203.206.32/dashboard/researcher/Dashboard";
     } else {
-      window.location.href = "http://13.203.206.32/choose-role";
+      window.location.href = "https://13.203.206.32/choose-role";
     }
   };
 

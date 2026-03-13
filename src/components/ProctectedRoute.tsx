@@ -65,14 +65,14 @@ export function RedirectIfAuthenticated({ children }: { children: React.ReactNod
         router.replace("/choose-role");
       } else if (activeRole === "SUPER_ADMIN") {
         // router.replace("/admin/dashboard");
-        window.location.href = "http://13.203.206.32/dashboard/superadmin/Dashboard";
+        window.location.href = "https://13.203.206.32/dashboard/superadmin/Dashboard";
       } else if (activeRole === "COE_MANAGER") {
         // router.replace("/ceo/dashboard");
-         window.location.href = "http://13.203.206.32/dashboard/coemanager/Dashboard";
+         window.location.href = "https://13.203.206.32/dashboard/coemanager/Dashboard";
       }
       else if (activeRole === "RESEARCHER") {
         // router.replace("/ceo/dashboard");
-         window.location.href = "http://13.203.206.32/dashboard/researcher/Dashboard";
+         window.location.href = "https://13.203.206.32/dashboard/researcher/Dashboard";
       } else {
         router.replace("/");
       }
