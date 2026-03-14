@@ -250,7 +250,7 @@ export default function ClusterDetailPage() {
                   </h3>
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  <Link href={`/Resource/${output.id}`}
+                  <Link href={output.fileUrl}
                     className="text-xs font-sans px-3 py-1.5 border border-white/20 rounded-lg hover:bg-white hover:text-gray-900 transition-all">
                     View
                   </Link>
