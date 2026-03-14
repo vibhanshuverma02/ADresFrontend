@@ -82,7 +82,7 @@
 //       },
 //       {
 //         title: "Dossiers",
-//         href: "/Resource/list?type=DOOSIERS",
+//         href: "/Resource/list?type=DOSSIERS",
 //         description: "Peer-reviewed research papers on climate resilience and disaster risk reduction.",
 //       },
 //       {
@@ -250,7 +250,7 @@ export const navigationItems: NavItem[] = [
       },
       {
         title: "Dossiers",
-        href: "/Resource/list?type=DOOSIERS",
+        href: "/Resource/list?type=DOSSIERS",
         description: "Peer-reviewed research papers on climate resilience and disaster risk reduction.",
       },
       {

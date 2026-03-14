@@ -13,19 +13,19 @@ const resourceSections = [
   {
     title: "Dossiers",
     type: "DOSSIERS",
-    image: "https://spp.cmu.ac.th/wp-content/uploads/2020/08/pb-01-scaled.jpg",
+    image: "https://bkmhealth.com/wp-content/uploads/2024/10/dossier-preparatio-new-1024x647.jpg",
     description: "Concise policy-focused insights",
   },
   {
     title: "Publications",
     type: "PUBLICATION",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlvYFZMJ3PGFvSfoYZmw879kDMle8uVb6bQ&s",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSByPw0zabKcidb08HAi2a4Er644K4rLOAvTQ&s",  
     description: "In-depth analytical documents",
   },
   {
     title: "Reports",
     type: "REPORTS",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlvYFZMJ3PGFvSfoYZmw879kDMle8uVb6bQ&s",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVLn8GJ4kNZL8kPhUB_d0bzyWtFHI9BpJ_VQ&s",
     description: "In-depth analytical documents",
   },
   {

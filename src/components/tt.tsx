@@ -206,7 +206,7 @@ export default function PortalGrid() {
   const initialTiles = [
     { title: "Knowledge Hub", images: [ "/latest resource.png", "/Resourcepage.png"], link: "/Resource", size: "col-span-2" },
     { title: "Events Calendar", images: ["/events/image3.png", "/events/image1.png"], link: "/events", size: "row-span-2" },
-    { title: "Global News", images: ["/india-silhouette.png"], link: "/news" },
+    { title: "Global News", images: ["/india-silhouette.png"], link: "/Noticeboard" },
     { title: "Gallery", images: ["/events/image.png","/events/image1.png","/events/image2.png"], link: "/events" },
     { title: "Discussion Forums", images: ["/test1.png", "/discusion.png"], link: "/Resource/Discussion" },
     { title: "Working & Development Community", images: ["/image1.png"], link: "/KeyAllices" },

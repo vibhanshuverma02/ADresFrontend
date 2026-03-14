@@ -78,13 +78,13 @@ useEffect(() => {
       <HeroSection />
 
       {/* ── Trending carousel ───────────────────────────────────────────── */}
-      {trending.length > 0 && (
-        <section  id="latest-discussions" className="max-w-7xl mx-auto px-4 md:px-8 py-10">
-          <SectionHeading label="🔥 Latest Discussions" />
+      {/* {trending.length > 0 && ( */}
+         {/* <section  id="latest-discussions" className="max-w-7xl mx-auto px-4 md:px-8 py-10"> */}
+          {/* <SectionHeading label="🔥 Latest Discussions" /> */}
           {/* 3D carousel from existing component — pass sort="trending" */}
-          <DiscussionCarouselMerged sort="trending" />
-        </section>
-      )}
+          {/* <DiscussionCarouselMerged sort="trending" /> */}
+         {/* </section> */}
+      {/* )} */}
 
       {/* ── Latest discussions ──────────────────────────────────────────── */}
       <section  id="discussion-list" className="max-w-7xl mx-auto px-4 md:px-8 pb-20 pt-4">
