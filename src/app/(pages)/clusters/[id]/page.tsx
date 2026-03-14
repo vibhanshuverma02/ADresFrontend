@@ -62,8 +62,10 @@ const TYPE_LABEL: Record<string, string> = {
   WHITE_PAPER:    "White Paper",
   POLICY_BRIEF:   "Policy Brief",
   BOOK:           "Book",
-  REPORT:         "Report",
+  REPORTS:         "Report",
   OTHER:          "Document",
+  DOSSIER:        "Dossier",
+  
 };
 
 interface ClusterDetail {
@@ -71,9 +73,9 @@ interface ClusterDetail {
   lead?: { id: string; name: string; email: string } | null;
   organizations: { organization: { id: string; name: string; logo?: string; type?: string; state?: string } }[];
   outputs: {
-    id: string; title: string; publishedAt: string; publishType: string;
+    id: string; title: string; publishedAt: string; publishType: string; fileUrl: string
     forum?: { id: string } | null;
-    resource?: { type: string; year: number; region: string };
+    resource?: { type: string; year: number; region: string   };
   }[];
   members: {
     researcher: {
@@ -253,7 +255,7 @@ export default function ClusterDetailPage() {
                     View
                   </Link>
                   {output.forum && (
-                    <Link href={`/Resource/Discussion/${output.forum.id}`}
+                    <Link   href={output.fileUrl}
                       className="text-xs font-sans px-3 py-1.5 border border-emerald-700/50 text-emerald-400 rounded-lg hover:bg-emerald-900/40 transition-all">
                       Discuss
                     </Link>

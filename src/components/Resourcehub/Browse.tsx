@@ -2,6 +2,32 @@
 import Link from "next/link";
 
 const resourceSections = [
+  
+  {
+    title: "Books",
+    type: "BOOK",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv3a5hb5zcWpXrW2s0cx47wA7yWOfXNjrPvQ&s",
+    description: "Curated books and publications",
+  },
+  
+  {
+    title: "Dossiers",
+    type: "DOSSIERS",
+    image: "https://spp.cmu.ac.th/wp-content/uploads/2020/08/pb-01-scaled.jpg",
+    description: "Concise policy-focused insights",
+  },
+  {
+    title: "Publications",
+    type: "PUBLICATION",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlvYFZMJ3PGFvSfoYZmw879kDMle8uVb6bQ&s",
+    description: "In-depth analytical documents",
+  },
+  {
+    title: "Reports",
+    type: "REPORTS",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlvYFZMJ3PGFvSfoYZmw879kDMle8uVb6bQ&s",
+    description: "In-depth analytical documents",
+  },
   {
     title: "Research Papers",
     type: "RESEARCH_PAPER",
@@ -9,28 +35,16 @@ const resourceSections = [
     description: "Peer-reviewed research and academic studies",
   },
   {
-    title: "Books",
-    type: "BOOK",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv3a5hb5zcWpXrW2s0cx47wA7yWOfXNjrPvQ&s",
-    description: "Curated books and publications",
+    title: "Toolkits",
+    type: "Toolkit",
+    image: "https://s3.amazonaws.com/libapps/accounts/97321/images/ResearchToolkit_Logo.png",
+    description: "Practical guides and tools",
   },
   {
     title: "Whitepapers",
     type: "WHITE_PAPER",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDlvYFZMJ3PGFvSfoYZmw879kDMle8uVb6bQ&s",
     description: "In-depth analytical documents",
-  },
-  {
-    title: "Policy Briefs",
-    type: "PolicyBrief",
-    image: "https://spp.cmu.ac.th/wp-content/uploads/2020/08/pb-01-scaled.jpg",
-    description: "Concise policy-focused insights",
-  },
-  {
-    title: "Toolkits",
-    type: "Toolkit",
-    image: "https://s3.amazonaws.com/libapps/accounts/97321/images/ResearchToolkit_Logo.png",
-    description: "Practical guides and tools",
   },
 ];
 

@@ -3,15 +3,15 @@ import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-12 relative z-50 ">
+    <footer className="bg-gray-100 text-white py-12 relative z-50 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="grid lg:grid-cols-4 gap-8 mb-8 ">
           {/* About ADRES Network */}
           <div>
             <h4 className="text-lg font-semibold mb-4 text-blue-400">
-              About ADRES Network
+               ADRES Network
             </h4>
-            <p className="text-gray-300 text-sm leading-relaxed mb-4 ">
+            <p className="text-black text-sm leading-relaxed mb-4 ">
               The Adaptation, Resilience and Sustainability Network integrates
               research, science and technology with policy planning for disaster
               risk reduction and sustainable development in India.
@@ -164,16 +164,13 @@ export function Footer() {
                 <Mail className="w-4 h-4 text-blue-400 flex-shrink-0" />
                 <a
                   href="mailto:contact@adresnetwork.org"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                  className="text-black hover:text-white transition-colors text-sm"
                 >
                   contact@adresnetwork.org
                 </a>
               </div>
 
-              <div className="flex items-center space-x-3">
-                <Phone className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-300 text-sm">+91-120-XXXX-XXXX</span>
-              </div>
+             
 
               <div className="mt-4">
                <Link
@@ -189,27 +186,27 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="border-t border-gray-700 pt-6 text-center">
-          <p className="text-gray-400 text-sm">
+          <p className="text-black text-sm">
             © 2026 ADRES Network. All rights reserved. 
           </p>
           <div className="mt-2 space-x-4">
             <Link
               href=""
-              className="text-gray-400 hover:text-white text-sm"
+              className="text-black hover:text-blue text-sm"
             >
               Privacy Policy
             </Link>
-            <span className="text-gray-600">•</span>
+            <span className="text-black">•</span>
             <Link
               href=""
-              className="text-gray-400 hover:text-white text-sm"
+              className="text-black hover:text-blue text-sm"
             >
               Terms of Service
             </Link>
-            <span className="text-gray-600">•</span>
+            <span className="text-black">•</span>
             <Link
               href=""
-              className="text-gray-400 hover:text-white text-sm"
+              className="text-black hover:text-blue text-sm"
             >
               Accessibility
             </Link>
