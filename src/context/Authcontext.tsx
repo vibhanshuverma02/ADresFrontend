@@ -246,11 +246,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   document.cookie = `activeRole=${role}; path=/; SameSite=Lax`;
   
   if (role === "SUPER_ADMIN") {
-    window.location.href = "https://13.203.206.32/dashboard/superadmin/Dashboard";
+    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/superadmin/Dashboard";
   } else if (role === "COE_MANAGER") {
-    window.location.href = "https://13.203.206.32/dashboard/coemanager/Dashboard";
+    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/coemanager/Dashboard";
   } else if (role === "RESEARCHER") {
-    window.location.href = "https://13.203.206.32/dashboard/researcher/Dashboard";
+    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/researcher/Dashboard";
   }
 };
 

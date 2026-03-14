@@ -16,7 +16,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "13.203.206.32",
+        hostname: "adresnetwork.iitr.ac.in",
       },
       {
         protocol: "https",
@@ -27,7 +27,7 @@ const nextConfig = {
 
   experimental: {
     serverActions: {
-      allowedOrigins: ["13.203.206.32"],
+      allowedOrigins: ["adresnetwork.iitr.ac.in"],
     },
   },
 };

@@ -177,7 +177,7 @@ export function Footer() {
 
               <div className="mt-4">
                <Link
-                href= "https://13.203.206.32/Noticeboard?type=newsletter">
+                href= "https://adresnetwork.iitr.ac.in/Noticeboard?type=newsletter">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
                   Subscribe to Newsletter
                 </button>

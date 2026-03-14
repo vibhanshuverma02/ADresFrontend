@@ -9,7 +9,7 @@ export const navigationItems: NavItem[] = [
     icon: Users,
     description: "Overview of India's National Action Plan on Climate Change",
     children: [
-      { title: "Overview", href: "/NMSKCC/overview" },
+      { title: "Overview", href: "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2021/dec/doc202112101.pdf" },
       {
         title: "Missions",
         href: "/NMSKCC/missions",
@@ -185,7 +185,7 @@ export const navigationItems: NavItem[] = [
     description: "Stay informed with upcoming events and a gallery capturing past workshops, seminars, and webinars.",
     children: [
     
-      { title: "Gallery",        href: "/Gallery"     },
+      { title: "Gallery",        href: "/gallery"  },
     ],
   },
   {
