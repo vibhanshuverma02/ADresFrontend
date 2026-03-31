@@ -66,29 +66,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   // ✅ Restore + validate session on mount
-  useEffect(() => {
-    const storedRole = localStorage.getItem("activeRole");
+ // ✅ Restore + validate session on mount
+useEffect(() => {
+  const storedRole = localStorage.getItem("activeRole");
 
-    async function validateSession() {
-      try {
-        console.log("itired")
-        const res = await api.get("/auth/me");
-        
-        setUser(res.data);
-        localStorage.setItem("user", JSON.stringify(res.data));
-        if (storedRole) setActiveRole(storedRole);
-        setStep("LOGGED_IN");
-       // router.push("/choose-role");
-      } catch (err) {
-        console.warn("❌ Session invalid, clearing localStorage");
+  async function validateSession() {
+    try {
+      const res = await api.get("/auth/me");
+      setUser(res.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
+      if (storedRole) setActiveRole(storedRole);
+      setStep("LOGGED_IN");
+    } catch (err: any) {
+      // ✅ If 401 — DON'T logout yet, axios interceptor will refresh automatically
+      // The interceptor retries /auth/me after refresh
+      // Only logout if refresh also fails
+      if (err.response?.status === 401) {
+        // Interceptor already tried refresh and failed → now logout
+        console.warn("❌ Session invalid after refresh attempt");
         logout(false);
-      } finally {
-        setLoading(false);
+      } else {
+        console.warn("❌ Network error, keeping session");
       }
+    } finally {
+      setLoading(false);
     }
+  }
 
-    validateSession();
-  }, []);
+  validateSession();
+}, []);
  // ✅ Restore + validate session on mount
   // ------------------------------
   // Validate Session (Used on mount + refresh)
@@ -193,29 +199,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const verifyCaptcha = async (captcha: string, deviceInfo: string) => {
-    if (!sessionId) throw new Error("No active session");
-    setLoading(true);
-    try {
-      const res = await api.post("/auth/verify-captcha", {
-        sessionId,
-        captcha,
-        deviceInfo,
-      });
+  if (!sessionId) throw new Error("No active session");
+  setLoading(true);
+  try {
+    const res = await api.post("/auth/verify-captcha", {
+      sessionId,
+      captcha,
+      deviceInfo,
+    });
 
-      if (res.data.message === "login") {
-        // ✅ Save accessToken
-        localStorage.setItem("accessToken", res.data.accessToken);
-        document.cookie = `accessToken=${res.data.accessToken}; path=/; SameSite=Lax; Secure`;
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+    if (res.data.message === "login") {
+      localStorage.setItem("accessToken", res.data.accessToken);
+      document.cookie = `accessToken=${res.data.accessToken}; path=/; SameSite=Lax; Secure`;
 
-        setUser(res.data.user);
-        setStep("LOGGED_IN");
-        router.push("/choose-role");
-      }
-    } finally {
-      setLoading(false);
+      // ✅ Fetch user from /auth/me
+      const meRes = await api.get("/auth/me");
+      const userData = meRes.data;
+
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+      setStep("LOGGED_IN");
+      router.push("/choose-role");
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   // -------------------------------
   // LOGOUT
@@ -283,7 +292,5 @@ export function useAuth() {
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }
-function parseJwt(token: string) {
-  throw new Error("Function not implemented.");
-}
+
 
