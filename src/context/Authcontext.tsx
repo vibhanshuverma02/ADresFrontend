@@ -2,7 +2,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
-import { isExternal } from "util/types";
 
 type User = {
   id: string;
@@ -25,23 +24,14 @@ type AuthContextType = {
   step: AuthStep;
   sessionId: string | null;
   captchaImage: string | null;
-
   login: (email: string, password: string) => Promise<void>;
   verifyOtp: (otp: string) => Promise<void>;
   resendOtp: () => Promise<void>;
   recreateCaptcha: () => Promise<any>;
   verifyCaptcha: (captcha: string, deviceInfo: string) => Promise<void>;
-
   logout: (redirect?: boolean) => void;
   chooseRole: (role: string) => void;
   setActiveRole: (role: string | null) => void;
-};
-
-type JwtPayload = {
-  sub?: string;
-  email?: string;
-  roles?: string[];
-  [key: string]: any;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,109 +45,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [captchaImage, setCaptchaImage] = useState<string | null>(null);
 
-  function parseJwt(token: string): JwtPayload | null {
-  try {
-    const base64 = token.split(".")[1];
-    return JSON.parse(atob(base64));
-  } catch {
-    return null;
-  }
-}
-
-
-  // ✅ Restore + validate session on mount
- // ✅ Restore + validate session on mount
-useEffect(() => {
-  const storedRole = localStorage.getItem("activeRole");
-
-  async function validateSession() {
-    try {
-      const res = await api.get("/auth/me");
-      setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
-      if (storedRole) setActiveRole(storedRole);
-      setStep("LOGGED_IN");
-    } catch (err: any) {
-      // ✅ If 401 — DON'T logout yet, axios interceptor will refresh automatically
-      // The interceptor retries /auth/me after refresh
-      // Only logout if refresh also fails
-      if (err.response?.status === 401) {
-        // Interceptor already tried refresh and failed → now logout
-        console.warn("❌ Session invalid after refresh attempt");
-        logout(false);
-      } else {
-        console.warn("❌ Network error, keeping session");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  validateSession();
-}, []);
- // ✅ Restore + validate session on mount
-  // ------------------------------
-  // Validate Session (Used on mount + refresh)
-  // ------------------------------
-  async function validateSession() {
+  // ── Session restore on mount ─────────────────────────────────────────────
+  // The axios interceptor handles 401 → refresh → retry automatically.
+  // So api.get("/auth/me") succeeds even if accessToken expired,
+  // as long as the rt cookie is still valid (30 days).
+  useEffect(() => {
     const storedRole = localStorage.getItem("activeRole");
-    const token = localStorage.getItem("accessToken");
 
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    const payload = parseJwt(token);
-    const isExternal =  payload?.roles?.includes("EXTERNAL_ACTOR");
-
-    try {
-      console.log("🔍 Validating session...");
-      const endpoint = "/auth/me";
-      const res = await api.get(endpoint);
-
-      setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
-      if (storedRole) setActiveRole(storedRole);
-      setStep("LOGGED_IN");
-
-      // ✅ Restore last path if refresh just happened
-      const lastPath = localStorage.getItem("lastPathBeforeRefresh");
-      if (lastPath) {
-        router.push(lastPath);
-        localStorage.removeItem("lastPathBeforeRefresh");
+    async function validateSession() {
+      try {
+        const res = await api.get("/auth/me");
+        setUser(res.data);
+        localStorage.setItem("user", JSON.stringify(res.data));
+        if (storedRole) setActiveRole(storedRole);
+        setStep("LOGGED_IN");
+      } catch {
+        // Both accessToken AND rt expired/invalid — fully logged out
+        console.warn("❌ Session fully expired");
+        clearAuthState();
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.warn("❌ Session invalid, clearing localStorage");
-      logout(false);
-    } finally {
-      setLoading(false);
     }
+
+    validateSession();
+  }, []);
+
+  function clearAuthState() {
+    try {
+      localStorage.removeItem("user");
+      localStorage.removeItem("activeRole");
+      localStorage.removeItem("accessToken");
+    } catch {}
+    setUser(null);
+    setActiveRole(null);
+    setSessionId(null);
+    setCaptchaImage(null);
+    setStep("INIT");
   }
 
-  // // ------------------------------
-  // // Mount → Validate session
-  // // ------------------------------
-  // useEffect(() => {
-  //   validateSession();
-  // }, []);
-
-  // // ------------------------------
-  // // Listen for token refresh events
-  // // ------------------------------
-  // useEffect(() => {
-  //   const handleTokenRefresh = () => {
-  //     console.log("🔔 Token refreshed — revalidating session...");
-  //     validateSession();
-  //   };
-
-  //   window.addEventListener("tokenRefreshed", handleTokenRefresh);
-  //   return () => window.removeEventListener("tokenRefreshed", handleTokenRefresh);
-  // }, []);
-
-  // -------------------------------
-  // LOGIN → OTP → CAPTCHA FLOW
-  // -------------------------------
+  // ── Login flow ───────────────────────────────────────────────────────────
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -199,87 +126,64 @@ useEffect(() => {
   };
 
   const verifyCaptcha = async (captcha: string, deviceInfo: string) => {
-  if (!sessionId) throw new Error("No active session");
-  setLoading(true);
-  try {
-    const res = await api.post("/auth/verify-captcha", {
-      sessionId,
-      captcha,
-      deviceInfo,
-    });
-
-    if (res.data.message === "login") {
-      localStorage.setItem("accessToken", res.data.accessToken);
-      document.cookie = `accessToken=${res.data.accessToken}; path=/; SameSite=Lax; Secure`;
-
-      // ✅ Fetch user from /auth/me
-      const meRes = await api.get("/auth/me");
-      const userData = meRes.data;
-
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData);
-      setStep("LOGGED_IN");
-      router.push("/choose-role");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // -------------------------------
-  // LOGOUT
-  // -------------------------------
-
-  const logout = (redirect: boolean = true) => {
+    if (!sessionId) throw new Error("No active session");
+    setLoading(true);
     try {
-      localStorage.removeItem("user");
-      localStorage.removeItem("activeRole");
-      localStorage.removeItem("accessToken");
-    } catch (e) {}
-    setUser(null);
-    setActiveRole(null);
-    setSessionId(null);
-    setCaptchaImage(null);
-    setStep("INIT");
+      const res = await api.post("/auth/verify-captcha", {
+        sessionId,
+        captcha,
+        deviceInfo,
+      });
+
+      if (res.data.message === "login") {
+        // Save accessToken in both localStorage and cookie
+        localStorage.setItem("accessToken", res.data.accessToken);
+        document.cookie = `accessToken=${res.data.accessToken}; path=/; SameSite=Lax; Secure`;
+
+        // Fetch full user from /auth/me
+        const meRes = await api.get("/auth/me");
+        const userData = meRes.data;
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+        setStep("LOGGED_IN");
+        router.push("/choose-role");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Logout ───────────────────────────────────────────────────────────────
+
+  const logout = (redirect = true) => {
+    clearAuthState();
+    document.cookie = "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "activeRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     if (redirect) router.push("/login");
   };
 
-  // -------------------------------
-  // ROLE CHOICE
-  // -------------------------------
+  // ── Role choice ──────────────────────────────────────────────────────────
 
- const chooseRole = (role: string) => {
-  setActiveRole(role);
-  localStorage.setItem("activeRole", role);
-  // ✅ Remove domain=localhost
-  document.cookie = `activeRole=${role}; path=/; SameSite=Lax`;
-  
-  if (role === "SUPER_ADMIN") {
-    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/superadmin/Dashboard";
-  } else if (role === "COE_MANAGER") {
-    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/coemanager/Dashboard";
-  } else if (role === "RESEARCHER") {
-    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/researcher/Dashboard";
-  }
-};
+  const chooseRole = (role: string) => {
+    setActiveRole(role);
+    localStorage.setItem("activeRole", role);
+    document.cookie = `activeRole=${role}; path=/; SameSite=Lax`;
+
+    if (role === "SUPER_ADMIN") {
+      window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/superadmin/Dashboard";
+    } else if (role === "COE_MANAGER") {
+      window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/coemanager/Dashboard";
+    } else if (role === "RESEARCHER") {
+      window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/researcher/Dashboard";
+    }
+  };
 
   return (
     <AuthContext.Provider
       value={{
-        user,
-        activeRole,
-        loading,
-        step,
-        sessionId,
-        captchaImage,
-        login,
-        verifyOtp,
-        resendOtp,
-        recreateCaptcha,
-        verifyCaptcha,
-        logout,
-        chooseRole,
-        setActiveRole,
+        user, activeRole, loading, step, sessionId, captchaImage,
+        login, verifyOtp, resendOtp, recreateCaptcha, verifyCaptcha,
+        logout, chooseRole, setActiveRole,
       }}
     >
       {children}
@@ -292,5 +196,3 @@ export function useAuth() {
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }
-
-
