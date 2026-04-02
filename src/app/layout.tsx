@@ -9,11 +9,19 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ADRES Network",
-  description:
-    "Adaptation, Resilience and Sustainability Network - Integrating research, policy, and implementation.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://adresnetwork.iitr.ac.in"),
+  title: {
+    default: "ADRES Network",
+    template: "%s | ADRES Network",   // ← every page title becomes "Page | ICARS Network"
+  },
+  description: "Connecting Centers of Excellence and Researchers across India.",
+  keywords: ["research", "center of excellence", "COE", "ICARS", "India" ],
+  openGraph: {
+    siteName: "ADRES Network",
+    locale: "en_IN",
+    type: "website",
+  },
 };
-
 export default function RootLayout({
   children,
 }: {
