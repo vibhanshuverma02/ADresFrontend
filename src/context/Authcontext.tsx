@@ -49,27 +49,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // The axios interceptor handles 401 → refresh → retry automatically.
   // So api.get("/auth/me") succeeds even if accessToken expired,
   // as long as the rt cookie is still valid (30 days).
-  useEffect(() => {
-    const storedRole = localStorage.getItem("activeRole");
+  // context/Authcontext.tsx — fix validateSession
+useEffect(() => {
+  const storedRole = localStorage.getItem("activeRole");
 
-    async function validateSession() {
-      try {
-        const res = await api.get("/auth/me");
-        setUser(res.data);
-        localStorage.setItem("user", JSON.stringify(res.data));
-        if (storedRole) setActiveRole(storedRole);
-        setStep("LOGGED_IN");
-      } catch {
-        // Both accessToken AND rt expired/invalid — fully logged out
-        console.warn("❌ Session fully expired");
-        clearAuthState();
-      } finally {
-        setLoading(false);
+  async function validateSession() {
+    try {
+      const res = await api.get("/auth/me");
+      const userData = res.data;
+
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setStep("LOGGED_IN");
+
+      // ✅ KEY FIX: if role already chosen, go straight to dashboard
+      if (storedRole && userData.roles?.includes(storedRole)) {
+        setActiveRole(storedRole);
+        // Don't redirect here — let RedirectIfAuthenticated handle it
+        // but pass the storedRole so it can go to dashboard directly
+      } else {
+        // Role not stored or invalid — clear it
+        localStorage.removeItem("activeRole");
       }
+    } catch {
+      console.warn("❌ Session fully expired");
+      clearAuthState();
+    } finally {
+      setLoading(false);
     }
+  }
 
-    validateSession();
-  }, []);
+  validateSession();
+}, []);
 
   function clearAuthState() {
     try {
