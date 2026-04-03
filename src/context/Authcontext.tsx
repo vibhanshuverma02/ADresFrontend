@@ -53,31 +53,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 useEffect(() => {
   const storedRole = localStorage.getItem("activeRole");
 
-  async function validateSession() {
-    try {
-      const res = await api.get("/auth/me");
-      const userData = res.data;
+async function validateSession() {
+  try {
+    const res = await api.get("/auth/me");
+    const userData = res.data;
 
-      setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData));
-      setStep("LOGGED_IN");
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+    setStep("LOGGED_IN");
 
-      // ✅ KEY FIX: if role already chosen, go straight to dashboard
-      if (storedRole && userData.roles?.includes(storedRole)) {
-        setActiveRole(storedRole);
-        // Don't redirect here — let RedirectIfAuthenticated handle it
-        // but pass the storedRole so it can go to dashboard directly
-      } else {
-        // Role not stored or invalid — clear it
-        localStorage.removeItem("activeRole");
-      }
-    } catch {
-      console.warn("❌ Session fully expired");
-      clearAuthState();
-    } finally {
-      setLoading(false);
+    // ✅ CASE 1: Stored role exists and valid
+    if (storedRole && userData.roles?.includes(storedRole)) {
+      setActiveRole(storedRole);
     }
+
+    // ✅ CASE 2: NO stored role but ONLY ONE role → auto assign
+    else if (!storedRole && userData.roles?.length === 1) {
+      const role = userData.roles[0];
+
+      console.log("🎯 Auto-selecting single role:", role);
+
+      setActiveRole(role);
+      localStorage.setItem("activeRole", role);
+      document.cookie = `activeRole=${role}; path=/; SameSite=Lax`;
+    }
+
+    // ✅ CASE 3: Invalid stored role → clear
+    else {
+      localStorage.removeItem("activeRole");
+    }
+
+  } catch {
+    console.warn("❌ Session fully expired");
+    clearAuthState();
+  } finally {
+    setLoading(false);
   }
+}
 
   validateSession();
 }, []);
@@ -155,9 +167,31 @@ useEffect(() => {
         const meRes = await api.get("/auth/me");
         const userData = meRes.data;
         localStorage.setItem("user", JSON.stringify(userData));
-        setUser(userData);
-        setStep("LOGGED_IN");
-        router.push("/choose-role");
+      setUser(userData);
+setStep("LOGGED_IN");
+
+// ✅ AUTO ROLE HANDLING
+if (userData.roles.length === 1) {
+  const role = userData.roles[0];
+
+  setActiveRole(role);
+  localStorage.setItem("activeRole", role);
+  document.cookie = `activeRole=${role}; path=/; SameSite=Lax`;
+
+  // ✅ Direct redirect (skip choose-role)
+  if (role === "SUPER_ADMIN") {
+    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/superadmin/Dashboard";
+  } else if (role === "COE_MANAGER") {
+    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/coemanager/Dashboard";
+  } else if (role === "RESEARCHER") {
+    window.location.href = "https://adresnetwork.iitr.ac.in/dashboard/researcher/Dashboard";
+  }
+
+} else {
+  // Multiple roles → let user choose
+  router.push("/choose-role");
+}
+
       }
     } finally {
       setLoading(false);
