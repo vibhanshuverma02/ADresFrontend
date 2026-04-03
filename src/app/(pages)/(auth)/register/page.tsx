@@ -504,31 +504,31 @@ async function handleRegister(e: React.FormEvent) {
   }
 
   const stepInfo = [
-    {
-      id: 1,
-      title: "Verifying Invitation",
-      icon: <MailCheck className="w-8 h-8 text-blue-600" />,
-      description: "Confirming your invitation details before you begin.",
-      mediaUrl: "/videos/verify.mp4",
-      isVideo: true,
-    },
-    {
-      id: 2,
-      title: "Complete Registration",
-      icon: <CheckCircle className="w-8 h-8 text-green-600" />,
-      description: "Set up your personal profile and organization details.",
-      mediaUrl: "/videos/verify.mp4",
-      isVideo: false,
-    },
-    {
-      id: 3,
-      title: "Activate Your Organization",
-      icon: <KeyRound className="w-8 h-8 text-yellow-600" />,
-      description: "Enter the activation code we sent to your email.",
-      mediaUrl: "/images/activate.gif",
-      isVideo: false,
-    },
-  ];
+  {
+    id: 1,
+    title: "Verifying Invitation",
+    icon: <MailCheck className="w-8 h-8 text-blue-600" />,
+    description: "Confirming your invitation details before you begin.",
+    mediaUrl: "/videos/verify.mp4",
+    isVideo: true,   // ✅ plays your video
+  },
+  {
+    id: 2,
+    title: "Complete Registration",
+    icon: <CheckCircle className="w-8 h-8 text-green-600" />,
+    description: "Set up your personal profile and organization details.",
+     mediaUrl: "/register.svg",  
+    isVideo: false,  // ✅ shows static image
+  },
+  {
+    id: 3,
+    title: "Activate Your Organization",
+    icon: <KeyRound className="w-8 h-8 text-yellow-600" />,
+    description: "Enter the activation code we sent to your email.",
+    mediaUrl: "/activate.svg",
+    isVideo: false,  // ✅ shows static image
+  },
+];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
