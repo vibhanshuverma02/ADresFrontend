@@ -328,6 +328,7 @@ type InviteData =
   | {
       role: "COE_MANAGER" | "SUPER_ADMIN";
       email: string;
+      managerName?: string;
       org: {
         id: string;
         name: string;
@@ -394,6 +395,7 @@ export default function RegisterWizard() {
           ...prev,
           email: invite.email,
           about: invite.org.about,
+          name: invite.managerName || "",
         }));
       }
 
@@ -607,25 +609,37 @@ async function handleRegister(e: React.FormEvent) {
               readOnly
               placeholder="Email"
             />
-            {inviteData?.role === "RESEARCHER" && (
-              <>
-                <input
-                  name="name"
-                  placeholder="Full Name"
-                  className="border p-2 w-full rounded"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                />
-                <input
-                  name="designation"
-                  placeholder="Designation"
-                  className="border p-2 w-full rounded"
-                  value={form.designation}
-                  onChange={handleChange}
-                />
-              </>
-            )}
+           {/* ✅ NAME FIELD FOR ALL ROLES */}
+{inviteData?.role === "RESEARCHER" ? (
+  <>
+    <input
+      name="name"
+      placeholder="Full Name"
+      className="border p-2 w-full rounded"
+      value={form.name}
+      onChange={handleChange}
+      required
+    />
+    <input
+      name="designation"
+      placeholder="Designation"
+      className="border p-2 w-full rounded"
+      value={form.designation}
+      onChange={handleChange}
+    />
+  </>
+) : (
+  <>
+    {/* ✅ READ-ONLY MANAGER NAME */}
+    <input
+      name="name"
+      placeholder="Manager Name"
+      className="border p-2 w-full rounded bg-gray-100 cursor-not-allowed"
+      value={form.name}
+      readOnly
+    />
+  </>
+)}
 
             <input
               type="password"
@@ -656,7 +670,9 @@ async function handleRegister(e: React.FormEvent) {
             />
 
             {inviteData?.role !== "RESEARCHER" && (
+              
               <>
+              
                 <h3 className="text-lg font-semibold text-green-600 mt-6">Organization Details</h3>
                 <textarea
                   name="about"
