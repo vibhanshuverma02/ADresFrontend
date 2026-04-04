@@ -1,6 +1,4 @@
 
-
-
 // "use client";
 
 // import { useEffect, useState } from "react";
@@ -10,14 +8,46 @@
 // import api from "@/lib/axios";
 // import { ContactsEditor } from "@/components/contact";
 
+// type InviteData = 
+//   | {
+//       role: "RESEARCHER";
+//       name: string;
+//       designation: string;
+//       email: string;
+//       orgId: string;
+//       org: {
+//         id: string;
+//         name: string;
+//         state: string;
+//         subTypeId: string;
+//         about: string;
+//         logo: string;
+//         isActive: boolean;
+//       };
+//     }
+//   | {
+//       role: "COE_MANAGER" | "SUPER_ADMIN";
+//       email: string;
+//       managerName?: string;
+//       org: {
+//         id: string;
+//         name: string;
+//         state: string;
+//         subTypeId: string;
+//         about: string;
+//         logo: string;
+//         isActive: boolean;
+//       };
+//     };
+
 // export default function RegisterWizard() {
 //   const router = useRouter();
 //   const searchParams = useSearchParams();
 //   const [step, setStep] = useState(1);
 //   const [loading, setLoading] = useState(false);
 //   const [error, setError] = useState("");
-
-//   const [inviteData, setInviteData] = useState<any>(null);
+//  const [activationCode, setActivationCode] = useState("");
+//   const [inviteData, setInviteData] = useState<InviteData | null>(null);
 
 //   const [form, setForm] = useState({
 //     email: "",
@@ -30,8 +60,6 @@
 //     learnMoreLink: "",
 //     contacts: {} as Record<string, any>
 //   });
-
-//   const [activationCode, setActivationCode] = useState("");
 
 //   // -----------------------------
 //   // STEP 1: Verify Invite Token
@@ -48,9 +76,29 @@
 //     setLoading(true);
 //     try {
 //       const { data } = await api.get(`/auth/invite/verify?token=${token}`);
-//       const invite = data.data;
-//       setInviteData(invite.org);
-//       setForm((prev) => ({ ...prev, email: invite.email }));
+//       const invite: InviteData = data.data;
+
+//       setInviteData(invite);
+
+//       // Map fields to form state
+//       if (invite.role === "RESEARCHER") {
+//         setForm((prev) => ({
+//           ...prev,
+//           email: invite.email,
+//           name: invite.name,
+//           designation: invite.designation,
+//           about: "",
+//         }));
+//       } else {
+//         // COE/SuperAdmin
+//         setForm((prev) => ({
+//           ...prev,
+//           email: invite.email,
+//           about: invite.org.about,
+//           name: invite.managerName || "",
+//         }));
+//       }
+
 //       setStep(2);
 //     } catch (err: any) {
 //       setError(err.response?.data?.message || "Invalid or expired invite");
@@ -60,42 +108,95 @@
 //   }
 
 //   // -----------------------------
-//   // STEP 2: Registration
-//   // -----------------------------
-//   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-//     const { name, value } = e.target;
-//     setForm((p) => ({ ...p, [name]: value }));
-//   }
+// // STEP 2: Registration
+// // -----------------------------
+// function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+//   const { name, value } = e.target;
+//   setForm((p) => ({ ...p, [name]: value }));
+// }
 
-//   async function handleRegister(e: React.FormEvent) {
-//     e.preventDefault();
-//     setLoading(true);
-//     setError("");
+// // async function handleRegister(e: React.FormEvent) {
+// //   e.preventDefault();
+// //   setLoading(true);
+// //   setError("");
 
-//     try {
-//       await api.post("/auth/register", {
-//         ...form,
-//         contacts: JSON.stringify(form.contacts),
+// //   try {
+// //     const payload = {
+// //       ...form,
+// //       contacts: JSON.stringify(form.contacts),
+// //     };
+
+// //     if (inviteData?.role === "RESEARCHER") {
+// //       // Researcher registration
+// //       await api.post("/users/newuser", payload);
+// //       router.push("/login"); // redirect after successful registration
+// //     } else {
+// //       // COE/SuperAdmin registration
+// //       await api.post("/auth/register", payload);
+// //       setStep(3); // proceed to activation
+// //     }
+// //   } catch (err: any) {
+// //     setError(err.response?.data?.message || "Registration failed");
+// //   } finally {
+// //     setLoading(false);
+// //   }
+// // }
+
+// async function handleRegister(e: React.FormEvent) {
+//   e.preventDefault();
+//   setLoading(true);
+//   setError("");
+
+//   try {
+//     const payload = {
+//       ...form,
+//       contacts: JSON.stringify(form.contacts),
+//     };
+
+//     if (inviteData?.role === "RESEARCHER") {
+//       // Researcher registration
+//       await api.post("/users/newuser", payload);
+
+//       // ✅ Clear localStorage
+//       localStorage.clear();
+
+//       // ✅ Clear sessionStorage
+//       sessionStorage.clear();
+
+//       // ✅ Clear all cookies
+//       document.cookie.split(";").forEach((c) => {
+//         document.cookie = c
+//           .replace(/^ +/, "")
+//           .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
 //       });
-//       setStep(3);
-//     } catch (err: any) {
-//       setError(err.response?.data?.message || "Registration failed");
-//     } finally {
-//       setLoading(false);
+
+//       router.push("/login"); // redirect after successful registration
+//     } else {
+//       // COE/SuperAdmin registration
+//       await api.post("/auth/register", payload);
+//       setStep(3); // proceed to activation
 //     }
+//   } catch (err: any) {
+//     setError(err.response?.data?.message || "Registration failed");
+//   } finally {
+//     setLoading(false);
 //   }
+// }
+
 
 //   // -----------------------------
-//   // STEP 3: Activation
+//   // STEP 3: Activation (only for org invites)
 //   // -----------------------------
 //   async function handleActivate(e: React.FormEvent) {
 //     e.preventDefault();
 //     setLoading(true);
 //     try {
-//       await api.post("/auth/activate-org", {
-//         orgId: inviteData.id,
-//         code: activationCode,
-//       });
+//       if (inviteData && inviteData.role !== "RESEARCHER") {
+//         await api.post("/auth/activate-org", {
+//           orgId: inviteData.org.id,
+//           code: activationCode,
+//         });
+//       }
 //       router.push("/login");
 //     } catch (err: any) {
 //       setError(err.response?.data?.message || "Activation failed");
@@ -105,31 +206,31 @@
 //   }
 
 //   const stepInfo = [
-//     {
-//       id: 1,
-//       title: "Verifying Invitation",
-//       icon: <MailCheck className="w-8 h-8 text-blue-600" />,
-//       description: "Confirming your invitation details before you begin.",
-//       mediaUrl: "/videos/verify.mp4",
-//       isVideo: true,
-//     },
-//     {
-//       id: 2,
-//       title: "Complete Registration",
-//       icon: <CheckCircle className="w-8 h-8 text-green-600" />,
-//       description: "Set up your personal profile and organization details.",
-//       mediaUrl: "/videos/verify.mp4",
-//       isVideo: false,
-//     },
-//     {
-//       id: 3,
-//       title: "Activate Your Organization",
-//       icon: <KeyRound className="w-8 h-8 text-yellow-600" />,
-//       description: "Enter the activation code we sent to your email.",
-//       mediaUrl: "/images/activate.gif",
-//       isVideo: false,
-//     },
-//   ];
+//   {
+//     id: 1,
+//     title: "Verifying Invitation",
+//     icon: <MailCheck className="w-8 h-8 text-blue-600" />,
+//     description: "Confirming your invitation details before you begin.",
+//     mediaUrl: "/videos/verify.mp4",
+//     isVideo: true,   // ✅ plays your video
+//   },
+//   {
+//     id: 2,
+//     title: "Complete Registration",
+//     icon: <CheckCircle className="w-8 h-8 text-green-600" />,
+//     description: "Set up your personal profile and organization details.",
+//      mediaUrl: "/register.svg",  
+//     isVideo: false,  // ✅ shows static image
+//   },
+//   {
+//     id: 3,
+//     title: "Activate Your Organization",
+//     icon: <KeyRound className="w-8 h-8 text-yellow-600" />,
+//     description: "Enter the activation code we sent to your email.",
+//     mediaUrl: "/activate.svg",
+//     isVideo: false,  // ✅ shows static image
+//   },
+// ];
 
 //   return (
 //     <div className="flex min-h-screen bg-gray-50">
@@ -197,7 +298,9 @@
 //             animate={{ opacity: 1, y: 0 }}
 //             className="w-full max-w-md space-y-6"
 //           >
-//             <h3 className="text-lg font-semibold text-blue-600">CoE Manager Profile</h3>
+//             <h3 className="text-lg font-semibold text-blue-600">
+//               {inviteData?.role === "RESEARCHER" ? "Researcher Profile" : "CoE Manager Profile"}
+//             </h3>
 
 //             <input
 //               name="email"
@@ -206,14 +309,38 @@
 //               readOnly
 //               placeholder="Email"
 //             />
-//             <input
-//               name="name"
-//               placeholder="Full Name"
-//               className="border p-2 w-full rounded"
-//               value={form.name}
-//               onChange={handleChange}
-//               required
-//             />
+//            {/* ✅ NAME FIELD FOR ALL ROLES */}
+// {inviteData?.role === "RESEARCHER" ? (
+//   <>
+//     <input
+//       name="name"
+//       placeholder="Full Name"
+//       className="border p-2 w-full rounded"
+//       value={form.name}
+//       onChange={handleChange}
+//       required
+//     />
+//     <input
+//       name="designation"
+//       placeholder="Designation"
+//       className="border p-2 w-full rounded"
+//       value={form.designation}
+//       onChange={handleChange}
+//     />
+//   </>
+// ) : (
+//   <>
+//     {/* ✅ READ-ONLY MANAGER NAME */}
+//     <input
+//       name="name"
+//       placeholder="Manager Name"
+//       className="border p-2 w-full rounded bg-gray-100 cursor-not-allowed"
+//       value={form.name}
+//       readOnly
+//     />
+//   </>
+// )}
+
 //             <input
 //               type="password"
 //               name="password"
@@ -222,13 +349,6 @@
 //               value={form.password}
 //               onChange={handleChange}
 //               required
-//             />
-//             <input
-//               name="designation"
-//               placeholder="Designation / Center of Excellence P.I."
-//               className="border p-2 w-full rounded"
-//               value={form.designation}
-//               onChange={handleChange}
 //             />
 //             <textarea
 //               name="description"
@@ -249,14 +369,20 @@
 //               onChange={(c) => setForm((p) => ({ ...p, contacts: c }))}
 //             />
 
-//             <h3 className="text-lg font-semibold text-green-600 mt-6">Organization Details</h3>
-//             <textarea
-//               name="about"
-//               placeholder="About your organization..."
-//               className="border p-2 w-full rounded"
-//               value={form.about}
-//               onChange={handleChange}
-//             />
+//             {inviteData?.role !== "RESEARCHER" && (
+              
+//               <>
+              
+//                 <h3 className="text-lg font-semibold text-green-600 mt-6">Organization Details</h3>
+//                 <textarea
+//                   name="about"
+//                   placeholder="About your organization..."
+//                   className="border p-2 w-full rounded"
+//                   value={form.about}
+//                   onChange={handleChange}
+//                 />
+//               </>
+//             )}
 
 //             <button
 //               className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700 disabled:opacity-50"
@@ -268,8 +394,8 @@
 //           </motion.form>
 //         )}
 
-//         {/* STEP 3: Activation */}
-//         {!loading && step === 3 && (
+//         {/* STEP 3: Activation (only for org invites) */}
+//         {!loading && step === 3 && inviteData?.role !== "RESEARCHER" && (
 //           <motion.form
 //             key="activation"
 //             onSubmit={handleActivate}
@@ -300,15 +426,14 @@
 //   );
 // }
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, Loader2, MailCheck, KeyRound } from "lucide-react";
+import { CheckCircle, Loader2, MailCheck, KeyRound, RefreshCw } from "lucide-react";
 import api from "@/lib/axios";
 import { ContactsEditor } from "@/components/contact";
 
-type InviteData = 
+type InviteData =
   | {
       role: "RESEARCHER";
       name: string;
@@ -341,33 +466,49 @@ type InviteData =
     };
 
 export default function RegisterWizard() {
-  const router = useRouter();
+  const router       = useRouter();
   const searchParams = useSearchParams();
-  const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
- const [activationCode, setActivationCode] = useState("");
+
+  const [step, setStep]             = useState(1);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState("");
+  const [activationCode, setActivationCode] = useState("");
   const [inviteData, setInviteData] = useState<InviteData | null>(null);
 
+  // ── Resend-activation state ──────────────────────────────────────────────
+  const [resendLoading, setResendLoading]   = useState(false);
+  const [resendSuccess, setResendSuccess]   = useState("");
+  const [resendError, setResendError]       = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0); // seconds remaining
+
   const [form, setForm] = useState({
-    email: "",
-    name: "",
-    password: "",
-    about: "",
-    inviteToken: "",
-    description: "",
-    designation: "",
-    learnMoreLink: "",
-    contacts: {} as Record<string, any>
+    email:        "",
+    name:         "",
+    password:     "",
+    about:        "",
+    inviteToken:  "",
+    description:  "",
+    designation:  "",
+    learnMoreLink:"",
+    contacts:     {} as Record<string, any>,
   });
 
-  // -----------------------------
-  // STEP 1: Verify Invite Token
-  // -----------------------------
+  // ── Cooldown timer ───────────────────────────────────────────────────────
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setInterval(() => {
+      setResendCooldown((c) => {
+        if (c <= 1) { clearInterval(t); return 0; }
+        return c - 1;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, [resendCooldown]);
+
+  // ── Step 1: Verify invite token ──────────────────────────────────────────
   useEffect(() => {
     const token = searchParams.get("token");
     if (!token) return;
-
     setForm((p) => ({ ...p, inviteToken: token }));
     verifyInviteToken(token);
   }, [searchParams]);
@@ -377,28 +518,24 @@ export default function RegisterWizard() {
     try {
       const { data } = await api.get(`/auth/invite/verify?token=${token}`);
       const invite: InviteData = data.data;
-
       setInviteData(invite);
 
-      // Map fields to form state
       if (invite.role === "RESEARCHER") {
         setForm((prev) => ({
           ...prev,
-          email: invite.email,
-          name: invite.name,
+          email:       invite.email,
+          name:        invite.name,
           designation: invite.designation,
-          about: "",
+          about:       "",
         }));
       } else {
-        // COE/SuperAdmin
         setForm((prev) => ({
           ...prev,
           email: invite.email,
           about: invite.org.about,
-          name: invite.managerName || "",
+          name:  invite.managerName || "",
         }));
       }
-
       setStep(2);
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid or expired invite");
@@ -407,86 +544,40 @@ export default function RegisterWizard() {
     }
   }
 
-  // -----------------------------
-// STEP 2: Registration
-// -----------------------------
-function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-  const { name, value } = e.target;
-  setForm((p) => ({ ...p, [name]: value }));
-}
-
-// async function handleRegister(e: React.FormEvent) {
-//   e.preventDefault();
-//   setLoading(true);
-//   setError("");
-
-//   try {
-//     const payload = {
-//       ...form,
-//       contacts: JSON.stringify(form.contacts),
-//     };
-
-//     if (inviteData?.role === "RESEARCHER") {
-//       // Researcher registration
-//       await api.post("/users/newuser", payload);
-//       router.push("/login"); // redirect after successful registration
-//     } else {
-//       // COE/SuperAdmin registration
-//       await api.post("/auth/register", payload);
-//       setStep(3); // proceed to activation
-//     }
-//   } catch (err: any) {
-//     setError(err.response?.data?.message || "Registration failed");
-//   } finally {
-//     setLoading(false);
-//   }
-// }
-
-async function handleRegister(e: React.FormEvent) {
-  e.preventDefault();
-  setLoading(true);
-  setError("");
-
-  try {
-    const payload = {
-      ...form,
-      contacts: JSON.stringify(form.contacts),
-    };
-
-    if (inviteData?.role === "RESEARCHER") {
-      // Researcher registration
-      await api.post("/users/newuser", payload);
-
-      // ✅ Clear localStorage
-      localStorage.clear();
-
-      // ✅ Clear sessionStorage
-      sessionStorage.clear();
-
-      // ✅ Clear all cookies
-      document.cookie.split(";").forEach((c) => {
-        document.cookie = c
-          .replace(/^ +/, "")
-          .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
-      });
-
-      router.push("/login"); // redirect after successful registration
-    } else {
-      // COE/SuperAdmin registration
-      await api.post("/auth/register", payload);
-      setStep(3); // proceed to activation
-    }
-  } catch (err: any) {
-    setError(err.response?.data?.message || "Registration failed");
-  } finally {
-    setLoading(false);
+  // ── Step 2: Registration ─────────────────────────────────────────────────
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const { name, value } = e.target;
+    setForm((p) => ({ ...p, [name]: value }));
   }
-}
 
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true); setError("");
+    try {
+      const payload = { ...form, contacts: JSON.stringify(form.contacts) };
 
-  // -----------------------------
-  // STEP 3: Activation (only for org invites)
-  // -----------------------------
+      if (inviteData?.role === "RESEARCHER") {
+        await api.post("/users/newuser", payload);
+        localStorage.clear();
+        sessionStorage.clear();
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        });
+        router.push("/login");
+      } else {
+        await api.post("/auth/register", payload);
+        setStep(3);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ── Step 3: Activation ───────────────────────────────────────────────────
   async function handleActivate(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -494,7 +585,7 @@ async function handleRegister(e: React.FormEvent) {
       if (inviteData && inviteData.role !== "RESEARCHER") {
         await api.post("/auth/activate-org", {
           orgId: inviteData.org.id,
-          code: activationCode,
+          code:  activationCode,
         });
       }
       router.push("/login");
@@ -505,55 +596,77 @@ async function handleRegister(e: React.FormEvent) {
     }
   }
 
+  // ✅ Resend activation code ─────────────────────────────────────────────
+  async function handleResendActivation() {
+    if (resendCooldown > 0 || !inviteData || inviteData.role === "RESEARCHER") return;
+
+    setResendLoading(true);
+    setResendError("");
+    setResendSuccess("");
+
+    try {
+      await api.post("/auth/resend-activation", {
+        orgId: inviteData.org.id,
+        email: form.email,
+      });
+      setResendSuccess("A new activation code has been sent to your email.");
+      setResendCooldown(60); // 60-second cooldown between resends
+    } catch (err: any) {
+      setResendError(err.response?.data?.message || "Failed to resend code. Please try again.");
+    } finally {
+      setResendLoading(false);
+    }
+  }
+
+  // ── Step info ────────────────────────────────────────────────────────────
   const stepInfo = [
-  {
-    id: 1,
-    title: "Verifying Invitation",
-    icon: <MailCheck className="w-8 h-8 text-blue-600" />,
-    description: "Confirming your invitation details before you begin.",
-    mediaUrl: "/videos/verify.mp4",
-    isVideo: true,   // ✅ plays your video
-  },
-  {
-    id: 2,
-    title: "Complete Registration",
-    icon: <CheckCircle className="w-8 h-8 text-green-600" />,
-    description: "Set up your personal profile and organization details.",
-     mediaUrl: "/register.svg",  
-    isVideo: false,  // ✅ shows static image
-  },
-  {
-    id: 3,
-    title: "Activate Your Organization",
-    icon: <KeyRound className="w-8 h-8 text-yellow-600" />,
-    description: "Enter the activation code we sent to your email.",
-    mediaUrl: "/activate.svg",
-    isVideo: false,  // ✅ shows static image
-  },
-];
+    {
+      id:          1,
+      title:       "Verifying Invitation",
+      icon:        <MailCheck className="w-8 h-8 text-blue-600" />,
+      description: "Confirming your invitation details before you begin.",
+      mediaUrl:    "/videos/verify.mp4",
+      isVideo:     true,
+    },
+    {
+      id:          2,
+      title:       "Complete Registration",
+      icon:        <CheckCircle className="w-8 h-8 text-green-600" />,
+      description: "Set up your personal profile and organization details.",
+      mediaUrl:    "/register.svg",
+      isVideo:     false,
+    },
+    {
+      id:          3,
+      title:       "Activate Your Organization",
+      icon:        <KeyRound className="w-8 h-8 text-yellow-600" />,
+      description: "Enter the activation code we sent to your email.",
+      mediaUrl:    "/activate.svg",
+      isVideo:     false,
+    },
+  ];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* LEFT SIDE: Steps Carousel */}
+      {/* ── LEFT: Steps carousel ──────────────────────────────────────────── */}
       <div className="w-1/2 bg-white flex flex-col items-center justify-center border-r p-10 relative overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
             initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0  }}
+            exit={{   opacity: 0, x:  50 }}
             transition={{ duration: 0.5 }}
             className="text-center max-w-md"
           >
             <div className="flex justify-center mb-4">{stepInfo[step - 1].icon}</div>
             <h2 className="text-2xl font-bold mb-3">{stepInfo[step - 1].title}</h2>
             <p className="text-gray-600 mb-6">{stepInfo[step - 1].description}</p>
+
             {stepInfo[step - 1].isVideo ? (
               <video
                 src={stepInfo[step - 1].mediaUrl}
-                autoPlay
-                loop
-                muted
+                autoPlay loop muted
                 className="w-64 mx-auto rounded-xl shadow"
               />
             ) : (
@@ -563,11 +676,13 @@ async function handleRegister(e: React.FormEvent) {
                 className="w-64 mx-auto rounded-xl shadow"
               />
             )}
+
+            {/* Step dots */}
             <div className="absolute bottom-8 w-full flex justify-center space-x-2">
               {[1, 2, 3].map((n) => (
                 <div
                   key={n}
-                  className={`h-2 w-8 rounded-full ${
+                  className={`h-2 w-8 rounded-full transition-colors duration-300 ${
                     step === n ? "bg-blue-600" : "bg-gray-300"
                   }`}
                 />
@@ -577,31 +692,37 @@ async function handleRegister(e: React.FormEvent) {
         </AnimatePresence>
       </div>
 
-      {/* RIGHT SIDE: Scrollable Form */}
+      {/* ── RIGHT: Scrollable form ────────────────────────────────────────── */}
       <div className="w-1/2 flex flex-col items-center justify-start p-10 overflow-y-auto max-h-screen">
+
         {loading && (
           <div className="flex items-center space-x-3 text-blue-600 mb-4">
-            <Loader2 className="animate-spin" /> <span>Processing...</span>
+            <Loader2 className="animate-spin" />
+            <span>Processing…</span>
           </div>
         )}
+
         {error && <p className="text-red-500 mb-4">{error}</p>}
 
-        {/* STEP 1 */}
-        {!loading && step === 1 && <p className="text-gray-600 text-center">Verifying your invite token...</p>}
+        {/* Step 1 */}
+        {!loading && step === 1 && (
+          <p className="text-gray-600 text-center">Verifying your invite token…</p>
+        )}
 
-        {/* STEP 2: Registration */}
+        {/* Step 2: Registration */}
         {!loading && step === 2 && (
           <motion.form
             key="register"
             onSubmit={handleRegister}
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0  }}
             className="w-full max-w-md space-y-6"
           >
             <h3 className="text-lg font-semibold text-blue-600">
               {inviteData?.role === "RESEARCHER" ? "Researcher Profile" : "CoE Manager Profile"}
             </h3>
 
+            {/* Email (read-only) */}
             <input
               name="email"
               className="border p-2 w-full rounded bg-gray-100 cursor-not-allowed"
@@ -609,60 +730,43 @@ async function handleRegister(e: React.FormEvent) {
               readOnly
               placeholder="Email"
             />
-           {/* ✅ NAME FIELD FOR ALL ROLES */}
-{inviteData?.role === "RESEARCHER" ? (
-  <>
-    <input
-      name="name"
-      placeholder="Full Name"
-      className="border p-2 w-full rounded"
-      value={form.name}
-      onChange={handleChange}
-      required
-    />
-    <input
-      name="designation"
-      placeholder="Designation"
-      className="border p-2 w-full rounded"
-      value={form.designation}
-      onChange={handleChange}
-    />
-  </>
-) : (
-  <>
-    {/* ✅ READ-ONLY MANAGER NAME */}
-    <input
-      name="name"
-      placeholder="Manager Name"
-      className="border p-2 w-full rounded bg-gray-100 cursor-not-allowed"
-      value={form.name}
-      readOnly
-    />
-  </>
-)}
+
+            {/* Role-specific name/designation fields */}
+            {inviteData?.role === "RESEARCHER" ? (
+              <>
+                <input
+                  name="name" placeholder="Full Name"
+                  className="border p-2 w-full rounded"
+                  value={form.name} onChange={handleChange} required
+                />
+                <input
+                  name="designation" placeholder="Designation"
+                  className="border p-2 w-full rounded"
+                  value={form.designation} onChange={handleChange}
+                />
+              </>
+            ) : (
+              <input
+                name="name" placeholder="Manager Name"
+                className="border p-2 w-full rounded bg-gray-100 cursor-not-allowed"
+                value={form.name} readOnly
+              />
+            )}
 
             <input
-              type="password"
-              name="password"
-              placeholder="Password"
+              type="password" name="password" placeholder="Password"
               className="border p-2 w-full rounded"
-              value={form.password}
-              onChange={handleChange}
-              required
+              value={form.password} onChange={handleChange} required
             />
             <textarea
-              name="description"
-              placeholder="Profile Description"
+              name="description" placeholder="Profile Description"
               className="border p-2 w-full rounded"
-              value={form.description}
-              onChange={handleChange}
+              value={form.description} onChange={handleChange}
             />
             <input
-              name="learnMoreLink"
-              placeholder="Learn More Link"
+              name="learnMoreLink" placeholder="Learn More Link"
               className="border p-2 w-full rounded"
-              value={form.learnMoreLink}
-              onChange={handleChange}
+              value={form.learnMoreLink} onChange={handleChange}
             />
             <ContactsEditor
               contacts={form.contacts || {}}
@@ -670,55 +774,86 @@ async function handleRegister(e: React.FormEvent) {
             />
 
             {inviteData?.role !== "RESEARCHER" && (
-              
               <>
-              
                 <h3 className="text-lg font-semibold text-green-600 mt-6">Organization Details</h3>
                 <textarea
-                  name="about"
-                  placeholder="About your organization..."
+                  name="about" placeholder="About your organization…"
                   className="border p-2 w-full rounded"
-                  value={form.about}
-                  onChange={handleChange}
+                  value={form.about} onChange={handleChange}
                 />
               </>
             )}
 
             <button
               className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-              type="submit"
-              disabled={loading}
+              type="submit" disabled={loading}
             >
-              {loading ? "Registering..." : "Continue"}
+              {loading ? "Registering…" : "Continue"}
             </button>
           </motion.form>
         )}
 
-        {/* STEP 3: Activation (only for org invites) */}
+        {/* Step 3: Activation (org roles only) */}
         {!loading && step === 3 && inviteData?.role !== "RESEARCHER" && (
           <motion.form
             key="activation"
             onSubmit={handleActivate}
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0  }}
             className="w-full max-w-sm space-y-4"
           >
-            <p className="text-gray-600 text-center">Enter the 6-digit activation code sent to your email.</p>
+            <p className="text-gray-600 text-center">
+              Enter the 6-digit activation code sent to your email.
+            </p>
+
             <input
               name="activationCode"
-              placeholder="Activation Code"
-              className="border p-2 w-full text-center rounded tracking-widest"
+              placeholder="000000"
+              className="border p-2 w-full text-center rounded tracking-[0.4em] text-lg font-mono"
               value={activationCode}
-              onChange={(e) => setActivationCode(e.target.value)}
+              onChange={(e) => setActivationCode(e.target.value.replace(/\D/g, ""))}
               maxLength={6}
               required
             />
+
             <button
-              className="bg-green-600 text-white w-full py-2 rounded hover:bg-green-700"
+              className="bg-green-600 text-white w-full py-2 rounded hover:bg-green-700 disabled:opacity-50"
               type="submit"
+              disabled={loading}
             >
-              Activate Organization
+              {loading ? "Activating…" : "Activate Organization"}
             </button>
+
+            {/* ✅ Resend activation code */}
+            <div className="pt-1 text-center space-y-1">
+              <button
+                type="button"
+                onClick={handleResendActivation}
+                disabled={resendLoading || resendCooldown > 0}
+                className={`inline-flex items-center gap-1.5 text-sm transition-colors ${
+                  resendCooldown > 0 || resendLoading
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                }`}
+              >
+                <RefreshCw
+                  className={`w-3.5 h-3.5 ${resendLoading ? "animate-spin" : ""}`}
+                />
+                {resendLoading
+                  ? "Sending…"
+                  : resendCooldown > 0
+                  ? `Resend in ${resendCooldown}s`
+                  : "Resend activation code"}
+              </button>
+
+              {/* Feedback messages */}
+              {resendSuccess && (
+                <p className="text-green-600 text-xs">{resendSuccess}</p>
+              )}
+              {resendError && (
+                <p className="text-red-500 text-xs">{resendError}</p>
+              )}
+            </div>
           </motion.form>
         )}
       </div>
