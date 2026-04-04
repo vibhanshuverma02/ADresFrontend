@@ -32,21 +32,40 @@ api.interceptors.response.use(
     if (err.response?.status === 401 && !original._retry) {
       original._retry = true;
 
+      // 🛑 1. Skip during login / auth flow
+      const isAuthFlow =
+        typeof window !== "undefined" &&
+        (window.location.pathname.includes("login") ||
+         window.location.pathname.includes("verify"));
+
+      if (isAuthFlow) {
+        console.log("⛔ In auth flow → skip refresh");
+        return Promise.reject(err);
+      }
+
+      // 🛑 2. Skip if no refresh cookie
+      const hasRefreshCookie =
+        typeof document !== "undefined" &&
+        document.cookie.includes("rt=");
+
+      if (!hasRefreshCookie) {
+        console.log("⛔ No refresh cookie → skipping refresh");
+        return Promise.reject(err);
+      }
+
       try {
-        
         const res = await refreshApi.post("/auth/refresh");
-        // ✅ cookies included
+
         const newToken = res.data.accessToken;
-         
         localStorage.setItem("accessToken", newToken);
-      
+
         original.headers.Authorization = `Bearer ${newToken}`;
 
-        return api(original); // retry with new token
+        return api(original);
       } catch (refreshErr) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
-      
+
         return Promise.reject(refreshErr);
       }
     }
@@ -54,6 +73,7 @@ api.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
 
 export default api;
 // "use client";

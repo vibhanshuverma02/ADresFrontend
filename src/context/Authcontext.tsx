@@ -52,47 +52,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // context/Authcontext.tsx — fix validateSession
 useEffect(() => {
   const storedRole = localStorage.getItem("activeRole");
+  const token = localStorage.getItem("accessToken");
 
-async function validateSession() {
-  try {
-    const res = await api.get("/auth/me");
-    const userData = res.data;
+  // ✅ Check if refresh cookie exists
+  const hasRefreshCookie =
+    typeof document !== "undefined" &&
+    document.cookie.split(";").some((c) => c.trim().startsWith("rt="));
 
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
-    setStep("LOGGED_IN");
-
-    // ✅ CASE 1: Stored role exists and valid
-    if (storedRole && userData.roles?.includes(storedRole)) {
-      setActiveRole(storedRole);
-    }
-
-    // ✅ CASE 2: NO stored role but ONLY ONE role → auto assign
-    else if (!storedRole && userData.roles?.length === 1) {
-      const role = userData.roles[0];
-
-      console.log("🎯 Auto-selecting single role:", role);
-
-      setActiveRole(role);
-      localStorage.setItem("activeRole", role);
-      document.cookie = `activeRole=${role}; path=/; SameSite=Lax`;
-    }
-
-    // ✅ CASE 3: Invalid stored role → clear
-    else {
-      localStorage.removeItem("activeRole");
-    }
-
-  } catch {
-    console.warn("❌ Session fully expired");
-    clearAuthState();
-  } finally {
+  // 🚫 If neither accessToken nor refresh cookie → skip everything
+  if (!token && !hasRefreshCookie) {
+    console.log("⛔ No token & no refresh cookie → skipping session validation");
     setLoading(false);
+    return;
   }
-}
+
+  async function validateSession() {
+    try {
+      const res = await api.get("/auth/me");
+      const userData = res.data;
+
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setStep("LOGGED_IN");
+
+      // ✅ CASE 1: Stored role exists and valid
+      if (storedRole && userData.roles?.includes(storedRole)) {
+        setActiveRole(storedRole);
+      }
+
+      // ✅ CASE 2: Only one role → auto assign
+      else if (!storedRole && userData.roles?.length === 1) {
+        const role = userData.roles[0];
+
+        console.log("🎯 Auto-selecting single role:", role);
+
+        setActiveRole(role);
+        localStorage.setItem("activeRole", role);
+        document.cookie = `activeRole=${role}; path=/; SameSite=Lax`;
+      }
+
+      // ✅ CASE 3: Invalid stored role
+      else {
+        localStorage.removeItem("activeRole");
+      }
+
+    } catch (err) {
+      console.warn("❌ Session invalid or expired");
+
+      // ⚠️ Only clear if something actually existed
+      clearAuthState();
+    } finally {
+      setLoading(false);
+    }
+  }
 
   validateSession();
 }, []);
+
 
   function clearAuthState() {
     try {
